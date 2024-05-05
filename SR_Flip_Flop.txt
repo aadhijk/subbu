@@ -1,0 +1,53 @@
+Code:
+
+module SR_FF(
+    input S,
+    input R,
+    input clk,
+    output reg Q,
+    output Q_bar
+    );
+    always @(posedge clk) begin
+       case({S,R})
+         2'b00: Q <= Q;
+         2'b01: Q <= 1'b0;
+         2'b10: Q <= 1'b1;
+         2'b11: Q <=1'bx;
+       endcase
+     end
+     assign Q_bar = ~Q;  
+endmodule
+
+Test Bench:
+module SR_FF_tb();
+
+   reg S,R,clk;
+   wire Q,Q_bar;
+   
+   SR_FF dut(.S(S),.R(R),.clk(clk),.Q(Q),.Q_bar(Q_bar));
+   
+   initial begin
+         clk=1'b1;
+    end
+    always #10 clk = ~clk;
+ initial begin
+             S = 1'b1;
+             R = 1'b0;
+             #20
+             S = 1'b0;
+             R = 1'b0;
+             #20
+             S = 1'b0;
+             R = 1'b1;
+             #20
+             S = 1'b1;
+             R = 1'b0;
+             #20
+             S = 1'b0;
+             R = 1'b0;
+             #20
+             S = 1'b1;
+             R = 1'b1;
+             end
+             initial #100 $finish;      
+endmodule

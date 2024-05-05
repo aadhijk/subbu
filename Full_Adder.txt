@@ -1,0 +1,67 @@
+Gate Level Implementation:
+
+module full_adder(
+    input a,
+    input b,
+    input c,
+    output sum,
+    output carry
+    );
+wire w1,w2,w3,w4;
+xor (w1,a,b);
+xor (sum,w1,c);
+and (w2,a,b);
+and (w3,b,c);
+and (w4,c,a);
+or (carry,w2,w3,w4);
+endmodule
+
+Data Flow Level Implementation:
+
+module full_adder(
+    input a,
+    input b,
+    input c,
+    output sum,
+    output carry
+    );
+assign sum = a^b^c;
+assign carry = (a&b)|(b&c)|(c&a);
+endmodule
+
+Behavioural Model Implementation:
+
+module half_adder(
+    input a,
+    input b,
+    input c,
+    output reg sum,
+    output reg carry
+    );
+always @(a or b or c)
+case({a,b,c})
+3'b000: begin sum=0;carry=0;end
+3'b001: begin sum=1;carry=0;end
+3'b010: begin sum=1;carry=0;end
+3'b011: begin sum=0;carry=1;end
+3'b100: begin sum=1;carry=0;end
+3'b101: begin sum=0;carry=1;end
+3'b110: begin sum=0;carry=1;end
+3'b111: begin sum=1;carry=1;end
+endcase
+endmodule
+
+Test Bench:
+
+module full_adder_tb();
+reg a,b,c;
+wire sum,carry;
+full_adder dut(.a(a),.b(b),.c(c),.sum(sum),.carry(carry));
+initial begin
+a=1'b0;b=1'b0;c=1'b0;
+end
+always #40 a<=~a;
+always #20 b<=~b;
+always #10 c<=~c;
+always #80 $finish;
+endmodule

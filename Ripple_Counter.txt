@@ -1,0 +1,31 @@
+Code:
+
+module ripple_counter (clk,t,count);
+input clk,t;
+output [3:0]count;
+T_FF t1(clk,t,count[0]);
+T_FF t2(count[0],t,count[1]);
+T_FF t3(count[1],t,count[2]);
+T_FF t4(count[2],t,count[3]);
+endmodule
+
+Test Bench:
+
+module ripple_counter_tb();
+
+reg clk,t;
+wire [3:0]count;
+
+ripple_counter dut(.clk(clk),.t(t),.count(count));
+
+initial 
+begin
+clk=1'b0;
+t=1'b1;
+end
+       
+always #10 clk = ~clk;
+
+initial #400 $finish;
+
+endmodule

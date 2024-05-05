@@ -1,0 +1,92 @@
+Code:
+
+module syn_counter(clk,rst,count);
+input clk,rst;
+output  [3:0] count;
+wire c0,c1,c2,c3;
+D_FF FF1(((1'b1)^count[0]),clk,rst,count[0],c0);
+JK_FF FF2((count[0]&~count[3]),(count[0]&~count[3]),clk,rst,count[1],c1);
+JK_FF FF3((count[1]&count[0]),(count[1]&count[0]),clk,rst,count[2],c2);
+T_FF FF4((count[3]&count[0])|(count[2]&count[1]&count[0]),clk,rst,count[3],c3);
+endmodule
+
+
+
+module D_FF(D,CLK,RST,Q,Q_B);
+input  D,CLK,RST;
+output reg Q;
+output wire Q_B;
+always @(posedge CLK)
+begin
+if (RST==1'b1)
+    Q <= 1'b0;
+ else 
+    Q <= D;
+end
+assign Q_B =~Q;
+endmodule
+
+
+
+module JK_FF(J,K,CLK,RST,Q,Q_B);
+input J,K,CLK,RST;
+output reg Q;
+output wire Q_B;
+always @ (posedge CLK)
+begin 
+if (RST==1'b1)
+   Q <= 1'b0;
+else
+  case ({J,K})
+  2'b00:begin Q <= Q; end
+  2'b01:begin Q <= 1'b0; end
+  2'b10:begin Q <= 1'b1; end
+  2'b11: begin Q <= ~Q; end
+  endcase
+end 
+assign Q_B = ~Q;
+endmodule
+
+
+module T_FF (T,CLK,RST,Q,Q_B);
+input T,CLK,RST;
+output reg Q;
+output Q_B;
+always @ (posedge  CLK)
+begin 
+   if (RST == 1'b1)
+     Q <= 1'b0;
+     
+   else if(RST==1'b0 && T==1'b1)
+        Q<= ~Q;
+   else 
+       Q <= Q;
+ end
+ assign Q_B = ~Q;
+endmodule
+
+
+
+Test Bench:
+
+module syn_counter_tb();
+
+reg clk,rst;
+wire [3:0] count;
+
+syn_counter dut(.clk(clk),.rst(rst),.count(count));
+
+initial clk=1'b0;
+always #10 clk=~clk;
+
+initial begin
+
+rst=1'b1;
+#40
+rst=1'b0;
+
+end
+initial #420 $finish;
+
+
+endmodule

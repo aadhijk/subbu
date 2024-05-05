@@ -1,0 +1,50 @@
+D Flip Flop:
+
+module d_ff(clk,clr,d,q,q_b);
+
+input clk,clr,d;
+output reg q;
+output q_b;
+
+always @ (posedge clk or posedge clr)
+begin
+if (clr == 1'b1)
+  q <= 0;
+else 
+  q <= d;
+end
+assign q_b=~q;
+
+endmodule
+
+Johnson Counter:
+
+module johnson_counter(clk,clr,count);
+
+input clk,clr;
+output [3:0] count;
+wire w1,w2,w3,w4;
+d_ff FF1(clk,clr,w4,count[3],w1);
+d_ff FF2(clk,clr,count[3],count[2],w2);
+d_ff FF3(clk,clr,count[2],count[1],w3);
+d_ff FF4(clk,clr,count[1],count[0],w4);
+endmodule
+
+Test Bench:
+module johnson_counter_tb();
+
+reg clk,clr;
+wire [3:0] count;
+
+johnson_counter dut(.clk(clk),.clr(clr),.count(count));
+
+initial clk=1'b0;
+always #5 clk=~ clk;
+
+initial begin
+  clr =1'b1;
+  #20
+  clr=1'b0;
+end
+initial #200 $finish;
+endmodule

@@ -1,0 +1,12 @@
+module T_FF (clk,T,Q);
+input clk,T;
+output reg Q;
+
+initial Q=1'b0;
+always @ (negedge clk)
+ begin
+  if(T)
+    Q <= ~Q;
+  else
+    Q <= Q;
+ end

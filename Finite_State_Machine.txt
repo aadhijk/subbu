@@ -1,0 +1,98 @@
+Code:
+
+module fsm(clk_in, rst, in1,state,out);
+ input clk_in, rst, in1;
+ output reg out;
+ //wire clk_out;
+ output reg [1:0] state;
+ //frequency_div fd1(.clk_in(clk_in),.clk_out(clk_out));
+ parameter s1 = 2'b00;
+ parameter s2 = 2'b01;
+ parameter s3 = 2'b10;
+ parameter s4 = 2'b11;
+  always @(posedge clk_in or posedge rst)
+     begin
+      if(rst) begin
+         state <= s1;
+         out <= 1'b0;
+       end
+      else begin
+      case (state)
+       s1: begin
+           if(in1 == 1'b1) begin
+            state <= s2;
+            out <= 1'b0;
+            end
+           else begin
+              state <= s1;
+              out <= 1'b0;
+            end
+            end
+        s2:begin
+            if(in1 == 1'b1) begin
+                state <= s3;
+                out <= 1'b0;
+             end
+               else begin
+                   state <= s1;
+                   out <= 1'b0;
+                end
+                end
+        s3: begin
+              if(in1 == 1'b1) begin
+                    state <= s4;
+                    out <= 1'b0;
+              end
+              else begin
+                     state <= s1;
+                     out <= 1'b0;
+              end
+              end
+         s4: begin
+             if(in1 == 1'b1) begin
+                  state <= s1;
+                  out <= 1'b1;
+                  end
+              else begin
+                  state <= s1;
+                  out <= 1'b0;
+               end
+               end
+      endcase
+    end
+   end
+endmodule
+
+Testbench:
+
+module fsm_tb();
+reg clk_in,rst,in1;
+wire [1:0]state;
+wire out;
+
+fsm dut(.clk_in(clk_in),.rst(rst),.in1(in1),.state(state),.out(out));
+
+initial begin clk_in=1'b0;
+rst=1'b1; 
+end
+
+always #5 clk_in = ~clk_in;
+initial begin
+   #20
+   in1=1'b1;
+   rst=1'b0;
+   #20
+   in1=1'b1;
+   rst=1'b0;
+   #20
+   in1=1'b1;
+   rst=1'b0;
+   #20
+   in1=1'b1;
+   rst=1'b0;
+   #20
+   in1=1'b1;
+   rst=1'b0;    
+end
+initial #120 $finish;
+endmodule

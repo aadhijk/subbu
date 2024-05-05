@@ -1,0 +1,51 @@
+D Flip Flop:
+
+module d_ff(clk,clr,pr,d,q);
+
+input clk,clr,pr,d;
+output reg q;
+
+always @ (posedge clk or posedge clr or posedge pr)
+begin
+if (clr == 1'b1 &&  pr==1'b0)
+   q <= 0;
+ 
+else if (pr == 1'b1 && clr == 1'b0 )
+   q <= 1;
+   
+ else 
+     q <= d;
+  
+end
+endmodule
+
+Ring Counter:
+
+module ring_counter(clk,ori,count);
+
+input clk,ori;
+output [3:0]count;
+assign L=1'b0;
+
+d_ff  FF1(clk,L,ori,count[0],count[3]);
+d_ff  FF2(clk,ori,L,count[3],count[2]);
+d_ff FF3(clk,ori,L,count[2],count[1]);
+d_ff FF4(clk,ori,L,count[1],count[0]);
+endmodule
+
+Test Bench:
+
+module ring_counter_tb();
+reg clk,ori;
+wire [3:0] count;
+ring_counter dut(.clk(clk),.ori(ori),.count(count));
+
+initial clk=1'b0;
+always #5 clk=~clk;
+initial begin
+   ori=1'b1;
+   #20
+   ori=1'b0;
+end
+initial #400 $finish;
+endmodule

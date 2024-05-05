@@ -1,0 +1,62 @@
+Code:
+module clk_freq_div(clk_in,clk_out);
+input clk_in;
+output reg clk_out;
+integer count;
+
+initial clk_out=1'b0;
+
+always @ (posedge clk_in)
+
+begin
+  if (count == 100000000)begin
+      clk_out <= ~clk_out;
+      count <= 0;
+  end
+  else begin
+      count=count+1;
+  end
+end
+endmodule
+
+module fsm(clk_in,rst,x,s,z,clk_out);
+ input clk_in,rst,x;
+ output reg z;
+ output  clk_out;
+ wire clk_out;
+ output reg s;
+ clk_freq_div fd1(clk_in,clk_out);
+ parameter s0 = 1'b0;
+ parameter s1 = 1'b1;
+ always @(posedge clk_out or posedge rst)
+     begin
+      if(rst) begin
+         s <= s0;
+         z <= 1'b0;
+       end
+      else begin
+      case (s)
+       s0: begin
+           if(x == 1'b0) begin
+            s <= s0;
+            z <= 1'b0;
+            end
+           else begin
+              s <= s1;
+              z <= 1'b0;
+            end
+            end
+        s1: begin
+            if(x == 1'b0) begin
+                s <= s0;
+                z <= 1'b1;
+             end
+             else begin
+                   s <= s1;
+                   z <= 1'b1;
+                end
+             end
+      endcase
+    end
+   end
+endmodule

@@ -1,0 +1,16 @@
+module d_ff(clk,clr,d,q,q_b);
+
+input clk,clr,d;
+output reg q;
+output q_b;
+
+always @ (posedge clk or posedge clr)
+begin
+if (clr == 1'b1)
+  q <= 0;
+else 
+  q <= d;
+end
+assign q_b=~q;
+
+endmodule

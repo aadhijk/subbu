@@ -1,0 +1,72 @@
+ENCODER::
+
+Code:
+module encoder(input  en, [7:0]d, output reg [2:0]y);
+always @ (en or d) begin
+    if (en==1)
+    case(d)
+    8'b00000001: assign y = 3'b000; 
+    8'b00000010: assign y = 3'b001; 
+    8'b00000100: assign y = 3'b010; 
+    8'b00001000: assign y = 3'b011; 
+    8'b00010000: assign y = 3'b100; 
+    8'b00100000: assign y = 3'b101; 
+    8'b01000000: assign y = 3'b110; 
+    8'b10000000: assign y = 3'b111; 
+    default: assign y=3'b000;
+    endcase
+end
+endmodule
+
+Test Bench:
+module encoder_tb();
+    reg en;
+    reg [7:0]d;
+    wire [2:0]y;
+    encoder uut(.d(d),.en(en),.y(y));
+    initial begin
+    en=0;d=8'b00000010;#10;
+    en=1;d=8'b10000000;#10;
+    en=1;d=8'b00000001;#10;
+    en=1;d=8'b00001000;#10;
+    $finish;
+    end 
+endmodule
+
+
+PRIORITY ENCODER:
+
+Code:
+module priority_encoder(input  en, [7:0]d, output reg [2:0]y);
+always @ (en or d) begin
+    if (en==1)
+    casex(d)
+    8'b00000001: assign y = 3'b000; 
+    8'b0000001X: assign y = 3'b001; 
+    8'b000001XX: assign y = 3'b010; 
+    8'b00001XXX: assign y = 3'b011; 
+    8'b0001XXXX: assign y = 3'b100; 
+    8'b001XXXXX: assign y = 3'b101; 
+    8'b01XXXXXX: assign y = 3'b110; 
+    8'b1XXXXXXX: assign y = 3'b111; 
+    endcase
+end
+endmodule
+
+Test Bench:
+module priority_encoder_tb();
+    reg en;
+    reg [7:0]d;
+    wire [2:0]y;
+    priority_encoder uut(.d(d),.en(en),.y(y));
+    initial begin
+    en=0;d=8'b00000010;#10;
+    en=1;d=8'b10010010;#10;
+    en=1;d=8'b00000001;#10;
+    en=1;d=8'b00001010;#10;
+    en=1;d=8'b01001010;#10;
+    
+    $finish;
+    end
+    
+endmodule

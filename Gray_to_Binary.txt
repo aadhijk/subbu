@@ -1,0 +1,33 @@
+Code:
+
+module binary2gray(
+input[3:0]b,
+output[3:0]g
+);
+
+always@(*)
+begin
+g[0]=b[0]^b[1];
+g[1]=b[1]^b[2];
+g[2]=b[2]^b[3];
+g[3]=b[3];
+end
+endmodule
+
+
+Test Bench:
+
+module binary2gray_tb();
+reg [3:0]b;
+wire[3:0]g;
+
+binary2gray uut(b,g);
+
+initial
+b=4'b0000;
+always #80 b[3]=~b[3];
+always #40 b[2]=~b[2];
+always #20 b[1]=~b[1];
+always #10 b[0]=~b[0];
+always #160 $finish;
+endmodule

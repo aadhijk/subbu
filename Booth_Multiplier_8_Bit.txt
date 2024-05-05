@@ -1,0 +1,85 @@
+Code:
+module booth_multiplier(X,Y,Z);
+
+input signed [7:0] X;
+input signed [7:0] Y;
+output signed [15:0] Z;
+
+reg [7:0] x;
+reg [7:0] y;
+reg [7:0] acc;
+reg signed [16:0] s;
+reg  q;
+reg [1:0] temp;
+integer i;
+
+always @ (X,Y)
+begin
+ x=X;
+ y=Y;
+ q=1'b0;
+ acc=8'b00000000;
+ 
+ 
+for(i=0;i<8;i=i+1)
+begin
+temp={y[0],q};
+if (temp==2'b00|temp==2'b11)begin
+  s={acc,y,q};
+  s=(s>>>1);
+  acc=s[16:9];
+  y=s[8:1];
+  q=s[0];
+ end
+
+else if(temp==2'b10)begin
+  acc=acc-x;
+  s={acc,y,q};
+  s=(s>>>1);
+  acc=s[16:9];
+  y=s[8:1];
+  q=s[0];
+ end
+  
+ else if(temp==2'b01)begin
+   acc=acc+x;
+   s={acc,y,q};
+   s=(s>>>1);
+   acc=s[16:9];
+   y=s[8:1];
+   q=s[0];
+ end
+$display("[$display] s=%b acc=%b y=%b q=%b",s,acc,y,q);
+end
+
+end
+
+assign Z={acc,y};
+endmodule
+
+
+Test Bench:
+module booth_multiplier_tb();
+ 
+    reg [7:0] X;
+    reg [7:0] Y;
+    wire [15:0] Z;
+   
+ booth_multiplier dut(.X(X),.Y(Y),.Z(Z));
+ initial
+ begin
+  X=8'b01010101;
+  Y=8'b01111110;
+  #20
+  X=8'b11111111;
+  Y=8'b11000011;
+  #20
+  X=8'b11011011;
+  Y=8'b01100110;
+  #20
+  X=8'b10011001;
+  Y=8'b11011011;
+  end
+  initial #80 $finish;
+
+endmodule

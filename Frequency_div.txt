@@ -1,0 +1,21 @@
+Code(1 second):
+module frequency_div(clk_in,clk_out);
+
+input clk_in;
+output reg clk_out;
+integer count;
+
+initial clk_out=1'b0;
+
+always @ (posedge clk_in)
+
+begin
+  if (count == 100000000)begin
+      clk_out <= ~clk_out;
+      count <= 0;
+  end
+  else begin
+      count=count+1;
+  end
+end
+endmodule

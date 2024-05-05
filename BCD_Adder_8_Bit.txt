@@ -1,0 +1,79 @@
+module full_adder(a,b,cin,sum,cout);
+
+input a,b,cin;
+output sum,cout;
+
+assign sum=(a^b^cin);
+assign cout=((a&b)|(b&cin)|(cin&a));
+endmodule
+
+
+
+
+
+
+
+module ripple_adder(a,b,cin,s,cout);
+
+input [3:0] a;
+input [3:0] b;
+input cin;
+output [3:0] s;
+output cout;
+
+wire c0,c1,c2;
+
+full_adder FA1(a[0],b[0],cin,s[0],c0);
+full_adder FA2(a[1],b[1],c0,s[1],c1);
+full_adder FA3(a[2],b[2],c1,s[2],c2);
+full_adder FA4(a[3],b[3],c2,s[3],cout);
+
+
+endmodule
+
+
+
+
+
+
+
+module bcd_adder(x,y,cin,z,cout);
+
+input [3:0] x;
+input [3:0] y;
+input cin;
+output cout;
+output [3:0] z;
+
+wire c1,c2;
+wire [3:0] s1;
+ripple_adder RA1(x,y,cin,s1,c1);
+assign cout=((s1[3]&s1[2])|(s1[3]&s1[1])|c1);
+wire [3:0]q;
+assign q={1'b0,cout,cout,1'b0};
+ripple_adder RA2(q,s1,1'b0,z,c2);
+
+endmodule
+
+
+
+
+
+
+
+
+module bcd_adder_eight (a,b,cin,s,cout);
+
+input [7:0] a;
+input [7:0] b;
+output [7:0] s;
+input cin;
+output cout;
+
+wire c1;
+
+bcd_adder BA1(a[3:0],b[3:0],cin,s[3:0],c1);
+bcd_adder BA2(a[7:4],b[7:4],c1,s[7:4],cout);
+
+
+endmodule

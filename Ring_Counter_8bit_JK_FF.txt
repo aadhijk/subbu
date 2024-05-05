@@ -1,0 +1,61 @@
+Code:
+
+module ring_counter(clk,ori,count);
+
+input clk,ori;
+output [7:0]count;
+assign L=1'b0;
+
+JK_FF FF1(clk,L,ori,count[0],~count[0],count[7]);
+JK_FF FF2(clk,ori,L,count[7],~count[7],count[6]);
+JK_FF FF3(clk,ori,L,count[6],~count[6],count[5]);
+JK_FF FF4(clk,ori,L,count[5],~count[5],count[4]);
+JK_FF FF5(clk,ori,L,count[4],~count[4],count[3]);
+JK_FF FF6(clk,ori,L,count[3],~count[3],count[2]);
+JK_FF FF7(clk,ori,L,count[2],~count[2],count[1]);
+JK_FF FF8(clk,ori,L,count[1],~count[1],count[0]);
+endmodule
+
+
+
+
+module JK_FF(clk,clr,pr,J,K,Q,Q_bar);
+
+input clk,clr,pr,J,K;
+output reg Q;
+output Q_bar;
+
+always@(posedge clk or posedge clr or posedge pr)
+    begin
+    if (clr == 1'b1 &&  pr==1'b0)
+       Q <= 0;
+    else if (pr == 1'b1 && clr == 1'b0 )
+       Q <= 1;
+    else 
+     case({J,K})
+       2'b00: Q <= Q;
+       2'b01: Q <= 1'b0;
+       2'b10: Q <= 1'b1;
+       2'b11: Q <= ~Q;
+     endcase
+     end
+     assign Q_bar = ~Q;   
+endmodule
+
+
+
+Test Bench:
+module ring_counter_tb();
+reg clk,ori;
+wire [7:0] count;
+ring_counter dut(.clk(clk),.ori(ori),.count(count));
+
+initial clk=1'b0;
+always #5 clk=~clk;
+initial begin
+   ori=1'b1;
+   #40
+   ori=1'b0;
+end
+initial #400 $finish;
+endmodule

@@ -1,0 +1,88 @@
+Code:
+
+module multiplier_4x4(a,b,p);
+
+input [3:0] a;
+input [3:0] b;
+output [7:0] p;
+
+wire c1,c2,c3,c4,c5,c6,c7,c8,c9,c10,c11;
+wire s1,s2,s3,s4,s5,s6;
+
+assign p[0]= a[0]&b[0];
+
+half_adder HA1((a[1]&b[0]),(a[0]&b[1]),p[1],c1);
+full_adder FA1((a[2]&b[0]),(a[1]&b[1]),c1,s1,c2);
+full_adder FA2((a[3]&b[0]),(a[2]&b[1]),c2,s2,c3);
+
+
+half_adder HA2((a[0]&b[2]),s1,p[2],c4);
+full_adder FA3((a[1]&b[2]),s2,c4,s3,c5);
+full_adder FA4((a[3]&b[1]),c3,c5,s4,c6);
+
+
+half_adder HA3((a[0]&b[3]),s3,p[3],c7);
+full_adder FA5((a[2]&b[2]),s4,c7,s5,c8);
+full_adder FA6((a[3]&b[2]),c6,c8,s6,c9);
+
+
+half_adder HA4((a[1]&b[3]),s5,p[4],c10);
+full_adder FA7((a[2]&b[3]),s6,c10,p[5],c11);
+full_adder FA8((a[3]&b[3]),c11,c9,p[6],p[7]);
+
+
+endmodule
+
+module full_adder(
+    input a,
+    input b,
+    input c,
+    output sum,
+    output carry
+    );
+assign sum = a^b^c;
+assign carry = (a&b)|(b&c)|(c&a);
+endmodule
+
+
+module half_adder(
+    input a,
+    input b,
+    output sum,
+    output carry
+    );
+assign sum=a^b;
+assign carry=a&b;
+endmodule
+
+Test Bench:
+
+module multiplier_4x4_tb();
+
+reg [3:0]a;
+reg [3:0]b;
+wire [7:0]p;
+
+multiplier_4x4 dut(.a(a),.b(b),.p(p));
+
+initial begin
+ a=4'b1000;
+ b=4'b1000;
+ 
+ #10
+ a=4'b1001;
+ b=4'b0111;
+ 
+ #10
+ a=4'b1001;
+ b=4'b0101;
+ 
+ #10
+ a=4'b0011;
+ b=4'b0011;
+ 
+ end
+
+initial 
+#40 $finish;
+endmodule
